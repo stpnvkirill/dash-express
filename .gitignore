@@ -5,6 +5,7 @@ __pycache__
 pages
 app.py
 titanic.csv
+
 # vim temporary files
 *~
 .*.sw?

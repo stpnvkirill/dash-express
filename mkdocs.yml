@@ -1,0 +1,87 @@
+site_name: DashExpress
+site_url: https://dash-express.ru/
+site_author: Kirill Stepanov
+site_description: >-
+  Write your documentation in Markdown and create a professional static site in
+  minutes – searchable, customizable, in 60+ languages, for all devices
+
+# Repository
+repo_name: stpnvkirill/dash-express
+repo_url: https://github.com/stpnvkirill/dash-express
+
+# Copyright
+copyright: Copyright &copy; 2023 Kirill Stepanov
+
+theme:
+  name: material
+  palette:
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: blue grey
+    accent: deep orange
+    toggle:
+      icon: material/lightbulb
+      name: Switch to dark mode
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: deep orange
+    accent: amber
+    toggle:
+      icon: material/lightbulb-outline
+      name: Switch to light mode
+  features:
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - navigation.indexes
+    - content.tooltips
+    - navigation.path
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - toc.integrate
+  font:
+    text: Roboto
+    code: Roboto Mono
+  icon:
+    repo: fontawesome/brands/github-alt
+  language: en
+
+markdown_extensions:
+  toc:
+    permalink: true
+  markdown.extensions.codehilite:
+    guess_lang: false
+  admonition:
+  codehilite:
+  extra:
+  pymdownx.superfences:
+    custom_fences:
+    - name: mermaid
+      class: mermaid
+      format: !!python/name:pymdownx.superfences.fence_code_format ''
+  pymdownx.tabbed:
+    alternate_style: true
+
+
+extra_css:
+  - assets/css/terminal.css
+  - assets/css/custom.css
+extra_javascript:
+  - assets/js/terminal.js
+  - assets/js/custom.js
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Quickstart: quickstart.md
+  - Fundamentals:
+    - Add data: fundamentals/Add data.md
+    - Visualization: fundamentals/Visualization.md
+    - Common patterns: fundamentals/filters.md
+    - Deployment: fundamentals/deployment.md
+  - Performance: performance.md
+  - Examples:
+    - 1. Simple text to text: exemples/Optimization exemple.md
+    - 2. Translate to multiple languages: exemples/Simple exemple.md
+  - Authors: authors.md

@@ -1,0 +1,11 @@
+.vscode
+__pycache__
+.pytest_cache
+.venv
+pages
+app.py
+titanic.csv
+# vim temporary files
+*~
+.*.sw?
+.cache

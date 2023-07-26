@@ -1,25 +1,18 @@
-from dash.dash import _default_index
-import plotly.io as pio
-from dash import Dash, Output, Input, State, ALL, dcc, html, Patch, MATCH
-from dash._jupyter import JupyterDisplayMode
 import os
 import json
 
-
 import numpy as np
+import plotly.io as pio
 import dash_mantine_components as dmc
-from dash.exceptions import PreventUpdate
 
 
-
-from ._app_shell import BaseAppShell, AsideAppShell
-from .filters import select_filters, multiselect_filters, range_filters
 from ._page import Page
-
 from .kpi import KPI, FastKPI
-
 from functools import lru_cache
-
+from dash.exceptions import PreventUpdate
+from dash._jupyter import JupyterDisplayMode
+from ._app_shell import BaseAppShell, AsideAppShell
+from dash import Dash, Output, Input, State, ALL, dcc, html, Patch, MATCH
 
 
 m = 15

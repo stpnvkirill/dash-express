@@ -119,8 +119,14 @@ class Page(object):
         return {'title':self.title, 'description':self.description}
 
     def register_frame(self, get_df):
-        self.get_df_func = self.app.cache_func(get_df)
+        @self.app.cache.cached(timeout = self.app.default_cache_timeout, key_prefix=str(self) + '/')
+        def get_df_func():
+            df = get_df()
+            return df  
+                
+        self.get_df_func = get_df_func
 
+           
     def add_kpi(self, kpi):
         id = str(uuid.uuid4())
         self.RENDER_FUNC_KPI[id] = kpi.render_func

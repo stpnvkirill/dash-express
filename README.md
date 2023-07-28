@@ -14,6 +14,137 @@ The key features are:
 * **Used Mantine UI**: Pretty UI by Mantine React Library
 * **Include Dark Theme**: Use a dark theme for all components (including graphs and maps) without any additional actions.
 
+
+## Minimal full-featured dashboard
+
+The first step is to import the necessary libraries
+
+```python
+import pandas as pd
+import plotly.express as px
+import dash_mantine_components as dmc
+
+from dash_express import DashExpress, Page
+```
+
+Далее нужно инициализировать экземпляр приложения DashExpress.
+
+```python
+app = DashExpress(
+    cache=True, # flask_caching.Cache instance or True
+    default_cache_timeout=3600,  # flask_caching.Cache timeout
+    app_shell=BaseAppShell(), # Appshell class for customization UI your app
+    # And standart Plotly Dash param
+ )
+```
+
+The Dash Express object implements a Dash application with a pre-configured interface and automatic callback generation for quickly creating interactive multi-page web analytics applications.
+
+## Page definition
+
+Each application page is a separate object, an instance of the `dash_express' class.Page`. The page contains the source data for analysis, graph creation functions and a list of filters.
+
+
+```python
+page = Page(
+    app=app,                    # DashExpress app
+    url_path='/',               # page url
+    name='Обзор',               # page name in navigation buttons
+    getdf=get_df,               # function for getting pd.DataFrame
+    title='Обзор',              # page title
+    )
+```
+
+## Getting data
+
+The 'get_df` function contains the logic of getting data: 
+
+```python
+get_df = lambda: pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
+```
+
+## Dashboard layout
+
+Next, you need to determine the layout of the dashboard. we recommend using dmc.Grid and dmc.SimpleGrid
+
+```python
+page.layout = dmc.SimpleGrid(
+    page.add_graph(h='100%',render_func=bar_func)
+    )
+```
+
+The render_func parameter of the page.add_graph method is a graph generation function based on data from a DataFrame
+
+```python
+# The logic of drawing a graph
+bar_func = lambda df: px.histogram(df, x='continent', y='lifeExp', histfunc='avg')
+```
+
+Последним действием остается добавление фильтров, которое делается простым выховом метода page.add_filter и указанием столбца фильтрации.
+
+```python
+page.add_autofilter('continent', multi=True)
+page.add_autofilter('country', multi=True)
+page.add_autofilter('lifeExp', multi=True)
+```
+
+The last action is to add filters, which is done by simply calling the page.add_filter method and specifying the filtering column.
+
+```python
+app.regester_page(page)
+```
+## App run
+
+These actions are enough to create a fully functional dashboard, so you can run the application.
+
+
+```python
+app.run()
+```
+
+## Full code of the minimal application
+
+```python
+import pandas as pd
+import plotly.express as px
+import dash_mantine_components as dmc
+
+from dash_express import DashExpress, Page
+
+
+# Incorporate data
+df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
+
+# Initialize the app
+app = HyperDash()
+
+# Initialize the Page
+page = Page(
+    app=app,                    # Приложение HyperDash
+    url_path='/',               # url страницы
+    name='Обзор',               # Название страницы в кнопках навигации
+    getdf=lambda:df,            # Функция получения pd.DataFrame
+    title='Обзор',              # title страницы
+    )
+
+# The logic of drawing a graph
+bar_func = lambda df: px.histogram(df, x='continent', y='lifeExp', histfunc='avg')
+
+# Dashboard layout
+page.layout = dmc.SimpleGrid(
+    page.add_graph(h='100%',render_func=bar_func)
+    )
+
+# By which columns to filter
+page.add_autofilter('continent', multi=True)
+page.add_autofilter('country', multi=True)
+page.add_autofilter('lifeExp', multi=True)
+
+app.regester_page(page)
+app.run()
+
+```
+
 ## Requirements
 
 Python 3.7+

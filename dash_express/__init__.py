@@ -51,12 +51,12 @@ _default_index = """<!DOCTYPE html>
 
 
 class DashExpress(Dash):
-    """The HyperDash object implements a Dash application with a pre-configured 
+    """The DashExpress object implements a Dash application with a pre-configured 
     interface and automatic generation of callbacks to quickly create interactive 
     multi-page web analytics applications.
 
-    HyperDash uses the Mantine framework and supports dark theme out of the box. 
-    Additionally on the side of HyperDash dark is applied to the objects of PLotly figures and Leaflet maps.
+    DashExpress uses the Mantine framework and supports dark theme out of the box. 
+    Additionally on the side of DashExpress dark is applied to the objects of PLotly figures and Leaflet maps.
     
     Dash is a framework for building analytic web applications without 
     the use of JavaScript.
@@ -260,7 +260,7 @@ class DashExpress(Dash):
                 ],
             )
 
-    def __init__(self, app_shell=BaseAppShell(), cache=True, default_cache_timeout=3600, name=None, server=True, assets_folder="assets", pages_folder="pages", 
+    def __init__(self, cache=True, default_cache_timeout=3600, app_shell=BaseAppShell(), name=None, server=True, assets_folder="assets", pages_folder="pages", 
                  use_pages=None, assets_url_path="assets", assets_ignore="", assets_external_path=None, eager_loading=False, 
                  include_assets_files=True, include_pages_meta=True, url_base_pathname=None, requests_pathname_prefix=None, 
                  routes_pathname_prefix=None, serve_locally=True, compress=None, meta_tags=None, index_string=_default_index, 
@@ -288,9 +288,6 @@ class DashExpress(Dash):
 
     def regester_page(self, Page):
         self.PAGES[Page.URL] = Page
-
-    def cache_func(self,f):
-        return self.cache.cached(f, timeout=self.default_cache_timeout)
     
     def register_server_callback(self):
         """Register a function callback on the server side"""
@@ -318,6 +315,7 @@ class DashExpress(Dash):
                     State({'type': 'geojsonfilter-store', 'id': ALL}, 'id'),
                     State("url-store", 'pathname'))
         def s(filters, ids, ids_kpi, ids_geo, url):
+            # print(filters)
             page = self.PAGES.get(url)
             if page:
                 df = page.filtered(filters)
@@ -325,6 +323,8 @@ class DashExpress(Dash):
                 kpi = []
                 geo = []
                 for id in ids:
+                    print(id)
+                    print(page.RENDER_FUNC)
                     fig = page.RENDER_FUNC.get(
                         id.get('id', 'default'))(df)
                     patched_fig = Patch()
@@ -338,6 +338,8 @@ class DashExpress(Dash):
                 for id in ids_geo:
                     g = page.GEOJSON_FUNC.get(id.get('id', 'default'))(df)
                     geo.append(g)
+                
+                print(res)
                 return [res, kpi, geo]
             else:
                 raise PreventUpdate
@@ -485,5 +487,6 @@ class DashExpress(Dash):
             dev_tools_ui=None, dev_tools_props_check=None, dev_tools_serve_dev_bundles=None, dev_tools_hot_reload=None,
             dev_tools_hot_reload_interval=None, dev_tools_hot_reload_watch_interval=None, dev_tools_hot_reload_max_retry=None,
             dev_tools_silence_routes_logging=None, dev_tools_prune_errors=None, **flask_run_options):
+        
         self.compile_layout()
         return super().run(host, port, proxy, debug, jupyter_mode, jupyter_width, jupyter_height, jupyter_server_url, dev_tools_ui, dev_tools_props_check, dev_tools_serve_dev_bundles, dev_tools_hot_reload, dev_tools_hot_reload_interval, dev_tools_hot_reload_watch_interval, dev_tools_hot_reload_max_retry, dev_tools_silence_routes_logging, dev_tools_prune_errors, **flask_run_options)

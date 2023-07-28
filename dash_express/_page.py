@@ -31,6 +31,7 @@ class Page(object):
         self.URL = url_path
         self.title = title if title else app.config['title']
         self.description = description
+        print(f'reload {url_path}')
         if type(get_df) != type(None):
             self.register_frame(get_df)
         else:

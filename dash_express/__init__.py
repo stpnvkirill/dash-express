@@ -279,6 +279,8 @@ class DashExpress(Dash):
             self.cache = cache
         elif isinstance(cache, bool) and cache == True:
             self.cache = Cache(self.server, config={'CACHE_TYPE': 'SimpleCache'})
+        elif isinstance(cache, dict):
+            self.cache = Cache(self.server, config=cache)
         else:
             raise ValueError("cache must be a flask_caching.Cache or a boolean")
         
@@ -286,7 +288,7 @@ class DashExpress(Dash):
     def _app_shell(self):
         self.layout = self.app_shell._app_provider(self)
 
-    def regester_page(self, Page):
+    def register_page(self, Page):
         self.PAGES[Page.URL] = Page
     
     def register_server_callback(self):
@@ -323,8 +325,6 @@ class DashExpress(Dash):
                 kpi = []
                 geo = []
                 for id in ids:
-                    print(id)
-                    print(page.RENDER_FUNC)
                     fig = page.RENDER_FUNC.get(
                         id.get('id', 'default'))(df)
                     patched_fig = Patch()
@@ -338,8 +338,6 @@ class DashExpress(Dash):
                 for id in ids_geo:
                     g = page.GEOJSON_FUNC.get(id.get('id', 'default'))(df)
                     geo.append(g)
-                
-                print(res)
                 return [res, kpi, geo]
             else:
                 raise PreventUpdate
@@ -489,4 +487,7 @@ class DashExpress(Dash):
             dev_tools_silence_routes_logging=None, dev_tools_prune_errors=None, **flask_run_options):
         
         self.compile_layout()
-        return super().run(host, port, proxy, debug, jupyter_mode, jupyter_width, jupyter_height, jupyter_server_url, dev_tools_ui, dev_tools_props_check, dev_tools_serve_dev_bundles, dev_tools_hot_reload, dev_tools_hot_reload_interval, dev_tools_hot_reload_watch_interval, dev_tools_hot_reload_max_retry, dev_tools_silence_routes_logging, dev_tools_prune_errors, **flask_run_options)
+        return super().run(host, port, proxy, debug, jupyter_mode, jupyter_width, jupyter_height, jupyter_server_url, dev_tools_ui, 
+                           dev_tools_props_check, dev_tools_serve_dev_bundles, dev_tools_hot_reload, dev_tools_hot_reload_interval, 
+                           dev_tools_hot_reload_watch_interval, dev_tools_hot_reload_max_retry, dev_tools_silence_routes_logging, 
+                           dev_tools_prune_errors, **flask_run_options)

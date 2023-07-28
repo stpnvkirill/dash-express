@@ -105,25 +105,26 @@ app.run()
 ## Full code of the minimal application
 
 ```python
-import pandas as pd
+iimport pandas as pd
 import plotly.express as px
 import dash_mantine_components as dmc
 
 from dash_express import DashExpress, Page
 
-
-# Incorporate data
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
 
+# Incorporate data
+get_df = lambda: pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
+
 # Initialize the app
-app = HyperDash()
+app = DashExpress()
 
 # Initialize the Page
 page = Page(
     app=app,                    # Приложение HyperDash
     url_path='/',               # url страницы
     name='Обзор',               # Название страницы в кнопках навигации
-    getdf=lambda:df,            # Функция получения pd.DataFrame
+    get_df=get_df,              # Функция получения pd.DataFrame
     title='Обзор',              # title страницы
     )
 
@@ -140,9 +141,8 @@ page.add_autofilter('continent', multi=True)
 page.add_autofilter('country', multi=True)
 page.add_autofilter('lifeExp', multi=True)
 
-app.regester_page(page)
-app.run()
-
+app.register_page(page)
+app.run(debug=True)
 ```
 
 ## Requirements

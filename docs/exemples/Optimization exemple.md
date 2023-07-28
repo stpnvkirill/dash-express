@@ -2,6 +2,8 @@
 
 Build your next dashboard even faster with premade responsive UI and automatic callback-function. DashExpress is a wrapper over the Plotly Dash web framework, which allows you to simplify and speed up the creation of multi-page analytical applications based on data from pd.DataFrame.
 
+Currently supported: Charts, KPI, Geographical Maps
+
 The key features are:
 
 * **High Performance**: Provided by built-in optimization methods of Dash callback functions.

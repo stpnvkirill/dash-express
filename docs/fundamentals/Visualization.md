@@ -1,8 +1,8 @@
 
 ## KPI cards
-KPI карточки это базовая часть мониторинга эффективности бизнеса и отслеживание актуальной информации. Любая карточка состоит из постоянной части (Контейнера) и переменной части (KPI показателя)
+KPI cards are a basic part of monitoring business performance and tracking up-to-date information. Any card consists of a constant part (Container) and a variable part (KPI indicator)
 
-Система рендера KPI  построена на использовании класса KPI, содержащего представление контейнера и логику расчета показателя. Простейшая реализация KPI, с автогенерацией расчетной функции представлена в классе FastKPI:
+The KPI rendering system is based on the use of the KPI class, which contains a container representation and the logic for calculating the indicator. The simplest implementation of KPI, with automatic generation of the calculation function, is presented in the FastKPI class:
 
 
 ```python
@@ -13,7 +13,7 @@ dmc.SimpleGrid(
     cols=4
     )
 ```
-Параметры инициализации FastKPI:
+FastKPI Initialization Parameters:
 
 ```
 col = DataFrame Column
@@ -22,7 +22,7 @@ pretty_func = pretty func for result calculate, for example: lambda x: f'{x:.1%}
 title = title of cards? default automatic generation
 ```
 
-Продвинутый вариант добавления KPI создание своей собственной карточки путем наследования от базового класса KPI:
+An advanced way to add KPI is to create your own card by inheriting from the base class of KPI:
 
 ```python
 from dash_express import KPI
@@ -46,12 +46,12 @@ app.add_kpi(MyKPI())
 
 
 ## Plotly Figure
-The Plotly graphing library has more than 50 chart types to choose from. Для работы DashExpress требуется ответить на 2 вопроса:
- 
-1. Где график расположен
-2. Как график построить
+The Plotly graphing library has more than 50 chart types to choose from. For Dash Express to work, you need to answer 2 questions:
 
-Ответ на первый вопрос закладывается при разработке макета, путем вызова метода page.add_graph(...) в месте нахождения графика, простой пример:
+1. Where is the graph located
+2. How to build a graph
+
+The answer to the first question is laid when developing the layout, by calling the page.add_graph(...) method in the location of the graph, a simple example:
 
 ```python
 dmc.SimpleGrid(
@@ -63,20 +63,20 @@ dmc.SimpleGrid(
     )
 ```
 
-Через .add_graph задается функция, содержащая логику построения графика в которую приложение DashExpress передаст отфильтрованный DataFrame.
+Through .add_graph is a function containing the logic of plotting to which the Dash Express application will pass the filtered DataFrame.
 ```python
 def bar_func(df):
     return px.bar(df, x="nation", y="count", color="medal", title="Long-Form Input")
 ```
 
 !!! Danger
-    Render_func должна возвращать Plotly Figure, реализации от других библиотек не поддерживаются! 
+    Render_func should return Plotly Figure, implementations from other libraries are not supported!
 
 
 
 ## Leaflet maps
 
-Если вы используете GeoPandas, вы можете добавлять карты на вашу панель, сделать это так же просто, как и добавить график:
+If you use GeoPandas, you can add maps to your dashboard, it's as simple as adding a graph.:
 
 ```python
 dmc.SimpleGrid(
@@ -87,7 +87,7 @@ dmc.SimpleGrid(
     )
 ```
 
-geojson_func - должная возвращать GeoDataFrame.__geo_interface__, если вам не нужны никакие дополнительные преобразования не указывайте данный параметр, DashExpress сделает все за вас.
+geojson_func - should return GeoDataFrame.__get_interface__, if you do not need any additional transformations, do not specify this parameter, DashExpress will do everything for you.
 
 ```python
 def geojson_func(gdf):
@@ -95,17 +95,3 @@ def geojson_func(gdf):
     return gdf.__geo_interface__
 ```
 
-## Requirements
-
-Python 3.7+
-
-DashExpress stands on the shoulders of giants:
-
-* <a href="https://dash.plotly.com/" class="external-link" target="_blank">Plotly Dash</a> for the web parts.
-* <a href="https://pandas.pydata.org/" class="external-link" target="_blank">Pandas DataFrame</a> for the data store & compute measure.
-* <a href="https://www.dash-mantine-components.com/" class="external-link" target="_blank">Dash Mantine Components</a> for the create pretty UI
-* <a href="https://dash-leaflet.herokuapp.com/" class="external-link" target="_blank">Dash Leaflet</a> for the create maps
-
-## License
-
-This project is licensed under the terms of the MIT license.

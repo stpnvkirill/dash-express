@@ -1,7 +1,7 @@
-Добавлять фильтры очень просто, если вы используете DashExpress. Вам нужно лишь указать колонку по которой будет происходить фильтрация и сказать тип фильтрации multi = True|False
+Adding filters is very easy if you use DashExpress. You only need to specify the column by which filtering will take place and say the type of filtering multi = True|False
 
 ```python
 page.add_autofilter('continent', multi=True)
 ```
 
-Вы так же можете указать дополнительные параметры компонента Dash Mantine.
+You can also specify additional parameters of the Dash Mantine component.

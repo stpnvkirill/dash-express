@@ -85,9 +85,5 @@ nav:
     - Add data: fundamentals/Add data.md
     - Visualization: fundamentals/Visualization.md
     - Filtering: fundamentals/filters.md
-    - Deployment: fundamentals/deployment.md
   - Performance: performance.md
-  - Examples:
-    - 1. Simple text to text: exemples/Optimization exemple.md
-    - 2. Translate to multiple languages: exemples/Simple exemple.md
   - Authors: authors.md

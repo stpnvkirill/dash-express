@@ -1,11 +1,11 @@
-Данные - это сердце любого дашборда, поэтому к получению таблицы нужно отнестись с максимальным вниманием. Оптимизированный DataFrame  позволит ускорить вычисления и снизит потребление памяти.
+Data is the heart of any dashboard, so you need to pay maximum attention to getting a table. Optimized Data Frame will speed up calculations and reduce memory consumption.
 
-Для оптимизации производительности можно использовать собственные методы Pandas. Ниже рассмотрено несколько базовых практик, которые позволят эффективно хранить и обрабатывать большие наборы данных.
+To optimize performance, you can use your own Pandas methods. Below are a few basic practices that will allow you to efficiently store and process large data sets.
 
 <details markdown="1">
-<summary>Совет 1: Не загружайте лишние данные</summary>
+<summary>Tip 1: Don't upload unnecessary data</summary>
 
-Загружайте только те колонки, которые будут использованы для построяния визуализаций и/или фильтрации
+Load only those columns that will be used for building visualizations and/or filtering
 
 ```python
 pd.read_csv('data.csv', usecols=['only', 'used', 'columns'])
@@ -13,7 +13,7 @@ pd.read_csv('data.csv', usecols=['only', 'used', 'columns'])
 </details>
 
 <details markdown="1">
-<summary>Совет 2: Используйте подходящие типы данных</summary>
+<summary>Tip 2: Use suitable data types</summary>
 
 We can optimize the data types to reduce memory usage. By using the memory_usage() function, we can find the memory used by the data objects. It returns a series with an index of the original column names and values representing the amount of memory used by each column in bytes.
 
@@ -76,7 +76,7 @@ category
 </details>
 
 
-Объект Page должен содержать функцию получения данных, ниже пример получения данных с приминением оптимизации:
+The Page object must contain a data acquisition function, below is an example of obtaining data using optimization:
 
 
 ```python
@@ -98,7 +98,7 @@ def get_df():
     return df
 ```
 
-Функцию получения данных необходимо передать во время инициализации объекта Page
+The data collection function must be passed during initialization of the Page object
 
 ```python
 page = Page(
@@ -108,4 +108,4 @@ page = Page(
     )
 ```
 !!! note 
-    Обратите внимание, что DashExpress кэширует DataFrame и не запрашивает данные при каждом запросе фильтрации.
+    Note that Dash Express caches the Data Frame and does not request data for every filtering request.

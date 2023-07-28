@@ -1,64 +1,73 @@
-## Создание приложения
+![Image title](https://raw.githubusercontent.com/stpnvkirill/dash-express/main/docs/assets/gifs/min_app.gif)
 
-Первым шагом необходимо импортировать нужные библиотеки
+The first step is to import the necessary libraries
 
 ```python
 import pandas as pd
 import plotly.express as px
 import dash_mantine_components as dmc
 
-from hyper_dash import HyperDash, Page
+from dash_express import DashExpress, Page
 ```
 
-Далее нужно инициализировать экземпляр приложения DashExpress.
+Next, you need to initialize an instance of the Dash Express application. Note that Dash Express uses caching by default to improve performance.  If your application already has a flask_caching object.Cache you can pass it to Dash Express.
 
 ```python
-app = DashExpress()
+app = DashExpress(
+    logo='DashExpress',          # navbar logo, string or dict: {'dark':'path/to/darklogo.svg', 'light':...}
+    cache=True,                  # flask_caching.Cache instance, dict or True (default: True)
+    default_cache_timeout=3600,  # flask_caching.Cache timeout in seconds (default: 3600)
+    app_shell=...,               # Appshell class for customization UI your app (default: BaseAppShell())
+    # And standart Plotly Dash param
+ )
 ```
 
-Объект DashExpress реализует приложение Dash с предварительно настроенным интерфейсом и автоматической генерацией обратных вызовов для быстрого создания интерактивных многостраничных приложений веб-аналитики.
+The Dash Express object implements a Dash application with a pre-configured interface and automatic callback generation for quickly creating interactive multi-page web analytics applications.
 
-## Определение страницы
+## Page definition
 
-Каждая страница приложения - отдельный объект, экземпляр класса `dash_express.Page`. Страница содержит в себе исходные данные для анализа, функции создания графиков и список фильтров.
+Each application page is a separate object, an instance of the `dash_express' class.Page`. The page contains the source data for analysis, graph creation functions and a list of filters.
+
 
 ```python
 page = Page(
-    app=app,                    # Приложение HyperDash
-    url_path='/',               # url страницы
-    name='Обзор',               # Название страницы в кнопках навигации
-    getdf=get_df,               # Функция получения pd.DataFrame
-    title='Обзор',              # title страницы
+    app=app,                    # DashExpress app
+    url_path='/',               # page url
+    name='Owerview',            # page name in navigation buttons
+    get_df=get_df,              # function for getting pd.DataFrame
+    title='Owerview',           # page title
     )
 ```
 
-## Получение данных
+## Getting data
 
-Функция `get_df` содержит в себе логику получения данных: 
+The 'get_df` function contains the logic of getting data: 
 
 ```python
 get_df = lambda: pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
 ```
 
-## Макет дашборда
+## Dashboard layout
 
-Далее необходимо определить макет дашборда. рекомендуем использовать dmc.Grid и dmc.SimpleGrid
+Next, you need to determine the layout of the dashboard. we recommend using dmc.Grid and dmc.SimpleGrid
 
 ```python
-# Dashboard layout
 page.layout = dmc.SimpleGrid(
     page.add_graph(h='100%',render_func=bar_func)
     )
 ```
 
-Параметр render_func метода page.add_graph - это функция генерации графика по данным из DataFrame
+The render_func parameter of the page.add_graph method is a graph generation function based on data from a DataFrame
 
 ```python
 # The logic of drawing a graph
-bar_func = lambda df: px.histogram(df, x='continent', y='lifeExp', histfunc='avg')
+def bar_func(df):
+    pv = pd.pivot_table(df, index='continent', values='lifeExp').reset_index()
+    fig = go.Figure([go.Bar(x=pv['continent'], y=pv['lifeExp'])])
+    return fig
 ```
 
-Последним действием остается добавление фильтров, которое делается простым выховом метода page.add_filter и указанием столбца фильтрации.
+The last action is to add filters, which is done by simply calling the page.add_filter method and specifying the filtering column.
 
 ```python
 page.add_autofilter('continent', multi=True)
@@ -66,51 +75,49 @@ page.add_autofilter('country', multi=True)
 page.add_autofilter('lifeExp', multi=True)
 ```
 
-Страница готова, теперь нужно инициализировать ее в DashExpress:
+## App run
 
-```python
-app.regester_page(page)
-```
-## Запуск приложения
-
-Этих действий достаточно для создания полнофункционального дашборда, поэтому можно запускать приложение.
+These actions are enough to create a fully functional dashboard, so you can run the application.
 
 
 ```python
 app.run()
 ```
 
-## Полный код минимального приложения
+## Full code of the minimal application
 
 ```python
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 import dash_mantine_components as dmc
 
-from hyper_dash import HyperDash, Page
+from dash_express import DashExpress, Page
 
 
 # Incorporate data
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
+get_df = lambda: pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
 
 # Initialize the app
-app = HyperDash()
+app = DashExpress(logo='DashExpress')
 
 # Initialize the Page
 page = Page(
-    app=app,                    # Приложение HyperDash
-    url_path='/',               # url страницы
-    name='Обзор',               # Название страницы в кнопках навигации
-    getdf=lambda:df,            # Функция получения pd.DataFrame
-    title='Обзор',              # title страницы
+    app=app,                    # DashExpress app
+    url_path='/',               # page url
+    name='Owerview',            # page name in navigation buttons
+    get_df=get_df,              # function for getting pd.DataFrame
+    title='Owerview',           # page title
     )
 
 # The logic of drawing a graph
-bar_func = lambda df: px.histogram(df, x='continent', y='lifeExp', histfunc='avg')
+def bar_func(df):
+    pv = pd.pivot_table(df, index='continent', values='lifeExp').reset_index()
+    fig = go.Figure([go.Bar(x=pv['continent'], y=pv['lifeExp'])])
+    return fig
 
 # Dashboard layout
 page.layout = dmc.SimpleGrid(
-    page.add_graph(h='100%',render_func=bar_func)
+    page.add_graph(h='calc(100vh - 138px)',render_func=bar_func)
     )
 
 # By which columns to filter
@@ -118,7 +125,20 @@ page.add_autofilter('continent', multi=True)
 page.add_autofilter('country', multi=True)
 page.add_autofilter('lifeExp', multi=True)
 
-app.regester_page(page)
-app.run()
-
+app.run(debug=True)
 ```
+
+## Requirements
+
+Python 3.7+
+
+DashExpress stands on the shoulders of giants:
+
+* <a href="https://dash.plotly.com/" class="external-link" target="_blank">Plotly Dash</a> for the web parts.
+* <a href="https://pandas.pydata.org/" class="external-link" target="_blank">Pandas DataFrame</a> for the data store & compute measure.
+* <a href="https://www.dash-mantine-components.com/" class="external-link" target="_blank">Dash Mantine Components</a> for the create pretty UI
+* <a href="https://dash-leaflet.herokuapp.com/" class="external-link" target="_blank">Dash Leaflet</a> for the create maps
+
+## License
+
+This project is licensed under the terms of the MIT license.

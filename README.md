@@ -1,8 +1,6 @@
 # Fast analytical web application with DashExpress
 
-
 Build your next dashboard even faster with premade responsive UI and automatic callback-function
-
 
 DashExpress is a wrapper over the Plotly Dash web framework, which allows you to simplify and speed up the creation of multi-page analytical applications based on data from pd.DataFrame.
 
@@ -17,7 +15,7 @@ The key features are:
 
 ## Minimal full-featured dashboard
 
-![Image title](https://raw.githubusercontent.com/stpnvkirill/dash-express/main/docs/assets/gifs/CPT2307281249-600x297.gif)
+![Image title](https://raw.githubusercontent.com/stpnvkirill/dash-express/main/docs/assets/gifs/min_app.gif)
 
 The first step is to import the necessary libraries
 
@@ -33,9 +31,9 @@ from dash_express import DashExpress, Page
 
 ```python
 app = DashExpress(
-    cache=True, # flask_caching.Cache instance or True
-    default_cache_timeout=3600,  # flask_caching.Cache timeout
-    app_shell=BaseAppShell(), # Appshell class for customization UI your app
+    cache=True, # flask_caching.Cache instance, dict or True (default: True)
+    default_cache_timeout=3600,  # flask_caching.Cache timeout in seconds (default: 3600)
+    app_shell=..., # Appshell class for customization UI your app (default: BaseAppShell())
     # And standart Plotly Dash param
  )
 ```
@@ -51,9 +49,9 @@ Each application page is a separate object, an instance of the `dash_express' cl
 page = Page(
     app=app,                    # DashExpress app
     url_path='/',               # page url
-    name='Обзор',               # page name in navigation buttons
+    name='Owerview',               # page name in navigation buttons
     getdf=get_df,               # function for getting pd.DataFrame
-    title='Обзор',              # page title
+    title='Owerview',              # page title
     )
 ```
 
@@ -107,13 +105,12 @@ app.run()
 ## Full code of the minimal application
 
 ```python
-iimport pandas as pd
+import pandas as pd
 import plotly.express as px
 import dash_mantine_components as dmc
 
 from dash_express import DashExpress, Page
 
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
 
 # Incorporate data
 get_df = lambda: pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
@@ -145,22 +142,6 @@ page.add_autofilter('lifeExp', multi=True)
 
 app.register_page(page)
 app.run(debug=True)
-```
-
-## Requirements
-
-Python 3.7+
-
-DashExpress stands on the shoulders of giants:
-
-* <a href="https://dash.plotly.com/" class="external-link" target="_blank">Plotly Dash</a> for the web parts.
-* <a href="https://pandas.pydata.org/" class="external-link" target="_blank">Pandas DataFrame</a> for the data store & compute measure.
-* <a href="https://www.dash-mantine-components.com/" class="external-link" target="_blank">Dash Mantine Components</a> for the create pretty UI
-* <a href="https://dash-leaflet.herokuapp.com/" class="external-link" target="_blank">Dash Leaflet</a> for the create maps
-
-## License
-
-This project is licensed under the terms of the MIT license.
 ```
 
 ## Requirements

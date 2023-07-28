@@ -27,7 +27,7 @@ The first step is to import the necessary libraries
 
 ```python
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 import dash_mantine_components as dmc
 
 from dash_express import DashExpress, Page

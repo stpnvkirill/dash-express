@@ -1,5 +1,7 @@
 # Fast analytical web application with DashExpress
 
+[Documentation](https://stpnvkirill.github.io/dash-express/)
+
 Build your next dashboard even faster with premade responsive UI and automatic callback-function. DashExpress is a wrapper over the Plotly Dash web framework, which allows you to simplify and speed up the creation of multi-page analytical applications based on data from pd.DataFrame.
 
 ```console

@@ -617,7 +617,7 @@ class Page(object):
             [
                 html.Div(
                     dl.Map(
-                        [dl.TileLayer(url=self.app.LIGHT_LEAFLET_TILE, id=dict(type='map-layer', id=id)),
+                        [dl.TileLayer(url=self.app.app_shell.LIGHT_LEAFLET_TILE, id=dict(type='map-layer', id=id)),
                          dl.GeoJSON(id={'type': "geojson", 'id': id}, **dl_geojson_kwargs),],
                         markerZoomAnimation=True,
                         style={'height': '100%', 'width': '100%',

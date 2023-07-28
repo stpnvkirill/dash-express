@@ -68,6 +68,10 @@ markdown_extensions:
     custom_checkbox: true
 
 
+extra:
+  analytics:
+    provider: google
+    property: G-P1WHPMRWD4
 extra_css:
   - assets/css/terminal.css
 extra_javascript:

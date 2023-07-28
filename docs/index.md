@@ -1,9 +1,14 @@
 <p align="center">
-  <a href="https://fastdash.app/"><img src="https://storage.googleapis.com/fast_dash/0.1.8/logo.png" alt="Fast Dash" width=300></a>
+  <a href="https://stpnvkirill.github.io/dash-express/"><img src="https://raw.githubusercontent.com/stpnvkirill/dash-express/main/docs/assets/gifs/min_app.gif" alt="DashExpress" width=800></a>
 </p>
 <p align="center">
     <em>A tool for faster application development Plotly Dash ⚡</em>
 </p>
+
+```console
+pip install dash-express
+```
+
 ## About
 
 DashExpress is a wrapper over the Plotly Dash web framework, which allows you to simplify and speed up the creation of multi-page analytical applications based on data from pd.DataFrame.
@@ -15,6 +20,7 @@ The key features are:
 * **Based on Pandas**: A library familiar to all analysts.
 * **Used Mantine UI**: Pretty UI by Mantine React Library
 * **Include Dark Theme**: Use a dark theme for all components (including graphs and maps) without any additional actions.
+
 
 ## Requirements
 

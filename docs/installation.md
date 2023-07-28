@@ -14,7 +14,7 @@ $ pip install dash-express
 
 This also brings along the `Plotly Dash`, `Pandas`, `Dash Mantine Components` & `Dash Leaflet` . This library is under active development, so install and upgrade frequently.
 
-We also recommend installing GeoPandas, which is required by Generated Geojson for leaflet maps and used in many of our examples.
+We also recommend installing GeoPandas, which is required by Generated Geojson for leaflet maps.
 
 
 <details markdown="1">

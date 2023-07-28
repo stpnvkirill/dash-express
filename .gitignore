@@ -2,5 +2,9 @@
 __pycache__
 .pytest_cache
 .venv
+build
+dash_express.egg-info
+dash_express.egg-info
+dist
 
 .cache

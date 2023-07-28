@@ -8,8 +8,8 @@ The key features are:
 
 * **High Performance**: Provided by built-in optimization methods of Dash callback functions.
 * **Fast to code**: Using a pre-configured UI and automatically generated callback functions.
-* **Based on Pandas**: Reduce about 40% of human (developer) induced errors.
-* **Used Mantine UI**: Pretty UI by Mantine React Library
+* **Based on Pandas**: A library familiar to all analysts.
+* **Used Mantine UI**: Pretty UI by Mantine React Library.
 * **Include Dark Theme**: Use a dark theme for all components (including graphs and maps) without any additional actions.
 
 

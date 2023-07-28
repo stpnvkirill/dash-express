@@ -29,6 +29,7 @@ Next, you need to initialize an instance of the Dash Express application.
 
 ```python
 app = DashExpress(
+    logo='DashExpress',          # navbar logo, string or dict: {'dark':'path/to/darklogo.svg', 'light':...}
     cache=True,                  # flask_caching.Cache instance, dict or True (default: True)
     default_cache_timeout=3600,  # flask_caching.Cache timeout in seconds (default: 3600)
     app_shell=...,               # Appshell class for customization UI your app (default: BaseAppShell())
@@ -48,7 +49,7 @@ page = Page(
     app=app,                    # DashExpress app
     url_path='/',               # page url
     name='Owerview',            # page name in navigation buttons
-    getdf=get_df,               # function for getting pd.DataFrame
+    get_df=get_df,              # function for getting pd.DataFrame
     title='Owerview',           # page title
     )
 ```
@@ -75,7 +76,10 @@ The render_func parameter of the page.add_graph method is a graph generation fun
 
 ```python
 # The logic of drawing a graph
-bar_func = lambda df: px.histogram(df, x='continent', y='lifeExp', histfunc='avg')
+def bar_func(df):
+    pv = pd.pivot_table(df, index='continent', values='lifeExp').reset_index()
+    fig = go.Figure([go.Bar(x=pv['continent'], y=pv['lifeExp'])])
+    return fig
 ```
 
 The last action is to add filters, which is done by simply calling the page.add_filter method and specifying the filtering column.
@@ -99,7 +103,7 @@ app.run()
 
 ```python
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 import dash_mantine_components as dmc
 
 from dash_express import DashExpress, Page
@@ -109,23 +113,26 @@ from dash_express import DashExpress, Page
 get_df = lambda: pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
 
 # Initialize the app
-app = DashExpress()
+app = DashExpress(logo='DashExpress')
 
 # Initialize the Page
 page = Page(
-    app=app,                    # Приложение HyperDash
-    url_path='/',               # url страницы
-    name='Обзор',               # Название страницы в кнопках навигации
-    get_df=get_df,              # Функция получения pd.DataFrame
-    title='Обзор',              # title страницы
+    app=app,                    # DashExpress app
+    url_path='/',               # page url
+    name='Owerview',            # page name in navigation buttons
+    get_df=get_df,              # function for getting pd.DataFrame
+    title='Owerview',           # page title
     )
 
 # The logic of drawing a graph
-bar_func = lambda df: px.histogram(df, x='continent', y='lifeExp', histfunc='avg')
+def bar_func(df):
+    pv = pd.pivot_table(df, index='continent', values='lifeExp').reset_index()
+    fig = go.Figure([go.Bar(x=pv['continent'], y=pv['lifeExp'])])
+    return fig
 
 # Dashboard layout
 page.layout = dmc.SimpleGrid(
-    page.add_graph(h='100%',render_func=bar_func)
+    page.add_graph(h='calc(100vh - 138px)',render_func=bar_func)
     )
 
 # By which columns to filter

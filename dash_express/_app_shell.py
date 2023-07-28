@@ -1,27 +1,72 @@
+import plotly.io as pio
 import dash_mantine_components as dmc
 
 from dash_iconify import DashIconify
 from dash import html, dcc, Output, Input, State, ALL
 
 
+m = 15
+margin = dict(l=m, r=m, t=round(3.5*m), b=m)
+DARK_PLOTLY_TEMPLATES = pio.templates["plotly_dark"]
+DARK_PLOTLY_TEMPLATES['layout']['paper_bgcolor'] = 'rgba(0,0,0,0)'
+DARK_PLOTLY_TEMPLATES['layout']['plot_bgcolor'] = 'rgba(0,0,0,0)'
+DARK_PLOTLY_TEMPLATES['layout']['margin'] = margin
+
+LIGHT_PLOTLY_TEMPLATES = pio.templates["plotly_white"]
+LIGHT_PLOTLY_TEMPLATES['layout']['paper_bgcolor'] = 'rgba(0,0,0,0)'
+LIGHT_PLOTLY_TEMPLATES['layout']['plot_bgcolor'] = 'rgba(0,0,0,0)'
+LIGHT_PLOTLY_TEMPLATES['layout']['margin'] = margin
+
+
 class BaseAppShell(object):
-    PRIMARY_COLORS = 'red'
-    THEME = {
-        "colors": {
-            "myPrimaryColor": [
-                "#65BC46",
-            ] * 10
-        },
-        "fontFamily": "'Inter', sans-serif",
-        "primaryColor": PRIMARY_COLORS,
-    }
-    DEFAULT_THEME = "light"
-    NAV_BUTTON_KWARGS = dict(color='primary',
-                             p=3, miw=50, variant='subtle')
-    THEME_ICON = {'dark': "line-md:moon-filled-alt-to-sunny-filled-loop-transition",
-                  "light": "line-md:sunny-filled-loop-to-moon-filled-loop-transition"}
-    THEME_ICON_COLOR = {'dark': "gray",
-                        "light": "yellow"}
+    def __init__(self, 
+                primary_colors='indigo',
+                theme=None,
+                default_colorscheme='light',
+                light_plotly_templates=None,
+                dark_plotly_templates=None,
+                dark_leaflet_tile=None,
+                light_leaflet_tile=None,
+                autocolorway=True,
+                theme_icon_dark="line-md:moon-filled-alt-to-sunny-filled-loop-transition", 
+                theme_icon_light="line-md:sunny-filled-loop-to-moon-filled-loop-transition",
+                error_page = None):
+        self.PRIMARY_COLORS = primary_colors
+        self.THEME = theme or {}
+        self.THEME["primaryColor"] = self.PRIMARY_COLORS
+        self.DEFAULT_THEME = default_colorscheme
+        self.NAV_BUTTON_KWARGS = dict(color='primary',
+                                p=3, miw=50, variant='subtle')
+        self.THEME_ICON = {'dark': theme_icon_dark,"light": theme_icon_light}
+        self.THEME_ICON_COLOR = {'dark': "gray",
+                            "light": "yellow"}
+        
+        self.LIGHT_PLOTLY_TEMPLATES = light_plotly_templates or LIGHT_PLOTLY_TEMPLATES
+        self.DARK_PLOTLY_TEMPLATES = dark_plotly_templates or DARK_PLOTLY_TEMPLATES
+        self.DARK_LEAFLET_TILE = dark_leaflet_tile or 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
+        self.LIGHT_LEAFLET_TILE = light_leaflet_tile or 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+
+        self.ERROR_PAGE = error_page or dmc.Stack(
+                    align="center",
+                    children=[
+                        dmc.Text(
+                            [
+                                "If you think this page should exist, create an issue ",
+                                dmc.Anchor(
+                                    "here",
+                                    underline=False,
+                                    href="https://github.com/thedirtyfew/dash-extensions/issues/new",
+                                ),
+                                ".",
+                            ]
+                        ),
+                        dmc.Anchor("Go back to home ->",
+                                href="/", underline=False),
+                    ],
+                )
+                
+        if autocolorway:
+            self.autocolorway()
 
     def build_nav_name(self, name, access):
         name = [name, dmc.Group(DashIconify(icon="majesticons:lock"), ml=3)
@@ -33,7 +78,7 @@ class BaseAppShell(object):
         nav_name = self.build_nav_name(page.name, page.is_accessible())
         nav = dmc.Button(nav_name, **self.NAV_BUTTON_KWARGS)
         nav.id = dict(type='nav-link', href=str(page.URL))
-        return dmc.Anchor(nav, href=page.URL)
+        return dmc.Anchor(nav, href=page.URL, pt=4)
 
     def _build_navs(self, app):
 
@@ -49,16 +94,15 @@ class BaseAppShell(object):
         out_filter = list(filter(filters, navs))
         return out_filter
 
-    def logo_container(self, app):
+    def logo_container(self):
         return dmc.Anchor(
-            dmc.Image(height=45, id='logo-img') if app.LOGO.get(
-                'type') == 'img' else app.LOGO.get('children'),
+            dmc.Image(height=45, id='logo-img') if isinstance(self.LOGO, dict) else self.LOGO,
             weight=550,
             size=30,
             href="/",
             underline=False,
             pr='xl',
-        )
+        ) if self.LOGO else html.Div()
 
     def color_scheme_toggle(self, icon, **kwargs):
         action_icon = dmc.ActionIcon(icon, **kwargs)
@@ -137,7 +181,7 @@ class BaseAppShell(object):
             children=[
                 dmc.Col(
                     dmc.Group([
-                        self.logo_container(app),
+                        self.logo_container(),
                         dmc.MediaQuery(dmc.Group(
                             id='nav-content',
                             spacing=3,
@@ -180,19 +224,6 @@ class BaseAppShell(object):
                                 smallerThan="lg",
                                 styles={"display": "none"},
 
-                            ),
-                            dmc.MediaQuery(
-                                dmc.Anchor(
-                                    dmc.ActionIcon(
-                                        DashIconify(
-                                            icon="line-md:account", width=22
-                                        ),
-                                        variant="outline",
-                                        radius='sm',
-                                        size='lg',
-                                        color=self.PRIMARY_COLORS,), href='/profile', refresh=True),
-                                smallerThan="lg",
-                                styles={"display": "none"},
                             ),
                             dmc.MediaQuery(
                                 self.mobile_menu(app),
@@ -336,6 +367,14 @@ class BaseAppShell(object):
             withGlobalStyles=True,
             withNormalizeCSS=True,
         )
+
+    def autocolorway(self):
+        primarycolors = self.PRIMARY_COLORS
+        lst = [[k, v[-1]] for k, v in dmc.theme.DEFAULT_COLORS.items()]
+        colorway = list(sorted(lst, key = lambda x: '#zzzz' if (x[0] == primarycolors) else x[1], reverse=True))
+        colorway = [i[1].upper() for i in colorway][:10]
+        self.LIGHT_PLOTLY_TEMPLATES['layout']['colorway'] = colorway
+        self.DARK_PLOTLY_TEMPLATES['layout']['colorway']  = colorway
 
 
 class AsideAppShell(BaseAppShell):

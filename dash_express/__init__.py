@@ -6,15 +6,14 @@ import orjson
 
 import numpy as np
 import pandas as pd
-import plotly.io as pio
 import dash_leaflet as dl
+import plotly.graph_objects as go
 import dash_mantine_components as dmc
 
 
 from .kpi import KPI, FastKPI
 from .filters import autofilter
 from flask_caching import Cache
-from functools import lru_cache
 from dash_iconify import DashIconify
 from .preview_chart import _render_wrapper
 from dash.exceptions import PreventUpdate
@@ -22,18 +21,6 @@ from dash._jupyter import JupyterDisplayMode
 from ._app_shell import BaseAppShell, AsideAppShell
 from dash import Dash, Output, Input, State, ALL, dcc, html, Patch, MATCH
 
-
-m = 15
-margin = dict(l=m, r=m, t=round(3.5*m), b=m)
-DARK_PLOTLY_TEMPLATES = pio.templates["plotly_dark"]
-DARK_PLOTLY_TEMPLATES['layout']['paper_bgcolor'] = 'rgba(0,0,0,0)'
-DARK_PLOTLY_TEMPLATES['layout']['plot_bgcolor'] = 'rgba(0,0,0,0)'
-DARK_PLOTLY_TEMPLATES['layout']['margin'] = margin
-
-LIGHT_PLOTLY_TEMPLATES = pio.templates["plotly_white"]
-LIGHT_PLOTLY_TEMPLATES['layout']['paper_bgcolor'] = 'rgba(0,0,0,0)'
-LIGHT_PLOTLY_TEMPLATES['layout']['plot_bgcolor'] = 'rgba(0,0,0,0)'
-LIGHT_PLOTLY_TEMPLATES['layout']['margin'] = margin
 
 _default_index = """<!DOCTYPE html>
 <html>
@@ -225,49 +212,7 @@ class DashExpress(Dash):
     :param add_log_handler: Automatically add a StreamHandler to the app logger
         if not added previously."""
 
-    PRIMARY_COLORS = 'red'
-    THEME = {
-        "colors": {
-            "myPrimaryColor": [
-                "#65BC46",
-            ] * 10
-        },
-        "fontFamily": "'Inter', sans-serif",
-        "primaryColor": PRIMARY_COLORS,
-        "components": {
-            # "Card": {"styles": {"root":{"backgroundColor": 'rgb(18 18 18)'}}},
-        },
-    }
-
-    PAGES = {}
-
-    LOGO = {'type':'img', 'children':{'dark':'/assets/logo/darklogo.svg','light':'/assets/logo/lightlogo.svg'}}
-
-    LIGHT_PLOTLY_TEMPLATES = LIGHT_PLOTLY_TEMPLATES
-    DARK_PLOTLY_TEMPLATES = DARK_PLOTLY_TEMPLATES
-    DARK_LEAFLET_TILE = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
-    LIGHT_LEAFLET_TILE = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-
-    ERROR_PAGE = dmc.Stack(
-                align="center",
-                children=[
-                    dmc.Text(
-                        [
-                            "If you think this page should exist, create an issue ",
-                            dmc.Anchor(
-                                "here",
-                                underline=False,
-                                href="https://github.com/thedirtyfew/dash-extensions/issues/new",
-                            ),
-                            ".",
-                        ]
-                    ),
-                    dmc.Anchor("Go back to home ->",
-                               href="/", underline=False),
-                ],
-            )
-
-    def __init__(self, cache=True, default_cache_timeout=3600, app_shell=BaseAppShell(), name=None, server=True, assets_folder="assets", pages_folder="pages", 
+    def __init__(self, logo='DashExpress', cache=True, default_cache_timeout=3600, app_shell=BaseAppShell(), name=None, server=True, assets_folder="assets", pages_folder="pages", 
                  use_pages=None, assets_url_path="assets", assets_ignore="", assets_external_path=None, eager_loading=False, 
                  include_assets_files=True, include_pages_meta=True, url_base_pathname=None, requests_pathname_prefix=None, 
                  routes_pathname_prefix=None, serve_locally=True, compress=None, meta_tags=None, index_string=_default_index, 
@@ -280,7 +225,9 @@ class DashExpress(Dash):
                          external_stylesheets, suppress_callback_exceptions, prevent_initial_callbacks, show_undo_redo, 
                          extra_hot_reload_paths, plugins, title, update_title, long_callback_manager, background_callback_manager, 
                          add_log_handler, **obsolete)
+        self.PAGES = {}
         self.app_shell = app_shell
+        self.app_shell.LOGO = logo
         self.default_cache_timeout = default_cache_timeout
         if isinstance(cache, Cache):
             self.cache = cache
@@ -291,7 +238,6 @@ class DashExpress(Dash):
         else:
             raise ValueError("cache must be a flask_caching.Cache or a boolean")
         
-
     def _app_shell(self):
         self.layout = self.app_shell._app_provider(self)
 
@@ -308,7 +254,7 @@ class DashExpress(Dash):
                     for k, v in self.PAGES.items() if v.is_accessible()}
             dict2 = {k: v.preview()for k, v in self.PAGES.items()
                     if not v.is_accessible() and v.access_mode == 'view'}
-            dict3 = {'#error': [None, self.ERROR_PAGE]}
+            dict3 = {'#error': [None, self.app_shell.ERROR_PAGE]}
 
             meta = {k:v.metatags() for k, v in self.PAGES.items()}
 
@@ -324,7 +270,6 @@ class DashExpress(Dash):
                     State({'type': 'geojsonfilter-store', 'id': ALL}, 'id'),
                     State("url-store", 'pathname'))
         def s(filters, ids, ids_kpi, ids_geo, url):
-            # print(filters)
             page = self.PAGES.get(url)
             if page:
                 df = page.filtered(filters)
@@ -332,8 +277,11 @@ class DashExpress(Dash):
                 kpi = []
                 geo = []
                 for id in ids:
-                    fig = page.RENDER_FUNC.get(
-                        id.get('id', 'default'))(df)
+                    try:
+                        fig = page.RENDER_FUNC.get(
+                            id.get('id', 'default'))(df)
+                    except:
+                        fig = go.Figure()
                     patched_fig = Patch()
                     patched_fig.data = fig.data
                     patched_fig.layout.xaxis.autorange = True
@@ -395,11 +343,11 @@ class DashExpress(Dash):
                         };
                     return [data,maps,figs] } """ % dict(
                 light=json.dumps(
-                    self.LIGHT_PLOTLY_TEMPLATES.to_plotly_json()),
+                    self.app_shell.LIGHT_PLOTLY_TEMPLATES.to_plotly_json()),
                 dark=json.dumps(
-                    self.DARK_PLOTLY_TEMPLATES.to_plotly_json()),
-                dark_layer = self.DARK_LEAFLET_TILE,
-                light_layer = self.LIGHT_LEAFLET_TILE,
+                    self.app_shell.DARK_PLOTLY_TEMPLATES.to_plotly_json()),
+                dark_layer = self.app_shell.DARK_LEAFLET_TILE,
+                light_layer = self.app_shell.LIGHT_LEAFLET_TILE,
             ),
             Output("mantine-docs-theme-provider", "theme"),
             Output(dict(type='map-layer',id=ALL), "url"),
@@ -426,7 +374,7 @@ class DashExpress(Dash):
             Input("color-scheme-toggle-dropdown", "n_clicks"),
             State("theme-store", "data"),
         )
-        if self.LOGO.get('type') == 'img':
+        if isinstance(self.app_shell.LOGO, dict) and self.LOGO.get('type') == 'img':
             self.clientside_callback(
                 """ function(data) {  
                             const logo = data["colorScheme"] == "dark" ? "%(dark_logo)s" : "%(light_logo)s";
@@ -515,21 +463,10 @@ class Page(object):
 
     def __init__(self, app, url_path, name=None, get_df=None, title=None, description=None,
                  access_func=None, access_mode='hide', download_opportunity=True,):
-        self.name = name or 'Page'
-        if isinstance(app, DashExpress):
-            self.app = app
-            app.register_page(self)
-        else:
-            raise ValueError("param app must be a DashExpress app")
-        
+        self.name = name or 'Page'        
         self.URL = url_path
         self.title = title if title else app.config['title']
         self.description = description
-        if type(get_df) != type(None):
-            self.register_frame(get_df)
-        else:
-            self.get_df_func = lambda: pd.DataFrame()
-
         self.access_func = access_func
         self.access_mode = access_mode
         self.download_opportunity = download_opportunity
@@ -539,10 +476,18 @@ class Page(object):
         self.GEOJSON_FUNC = {}
         self.FILTERS = []
         self.FILTERS_FUNC = {}
-
-        html.Div()
-
         self.layout = dmc.Grid()
+
+        if isinstance(app, DashExpress):
+            self.app = app
+            app.register_page(self)
+        else:
+            raise ValueError("param app must be a DashExpress app")
+        
+        if type(get_df) != type(None):
+            self.register_frame(get_df)
+        else:
+            self.get_df_func = lambda: pd.DataFrame()     
 
     def is_accessible(self):
         if self.access_func != None:
@@ -619,7 +564,6 @@ class Page(object):
             return df  
                 
         self.get_df_func = get_df_func
-
            
     def add_kpi(self, kpi):
         id = str(uuid.uuid4())
@@ -649,7 +593,7 @@ class Page(object):
         with self.app.server.app_context():
             fig = render_func(self.get_df_func())
             fig.data = []
-        fig.update_layout(template=self.app.DARK_PLOTLY_TEMPLATES)
+        fig.update_layout(template=self.app.app_shell.DARK_PLOTLY_TEMPLATES)
         return dmc.LoadingOverlay(dmc.Card(
             [
                 dcc.Graph(figure=fig, id=dict(type='graph', id=id),

@@ -1,8 +1,6 @@
 # Fast analytical web application with DashExpress
 
-Build your next dashboard even faster with premade responsive UI and automatic callback-function
-
-DashExpress is a wrapper over the Plotly Dash web framework, which allows you to simplify and speed up the creation of multi-page analytical applications based on data from pd.DataFrame.
+Build your next dashboard even faster with premade responsive UI and automatic callback-function. DashExpress is a wrapper over the Plotly Dash web framework, which allows you to simplify and speed up the creation of multi-page analytical applications based on data from pd.DataFrame.
 
 The key features are:
 
@@ -27,13 +25,13 @@ import dash_mantine_components as dmc
 from dash_express import DashExpress, Page
 ```
 
-Далее нужно инициализировать экземпляр приложения DashExpress.
+Next, you need to initialize an instance of the Dash Express application.
 
 ```python
 app = DashExpress(
-    cache=True, # flask_caching.Cache instance, dict or True (default: True)
+    cache=True,                  # flask_caching.Cache instance, dict or True (default: True)
     default_cache_timeout=3600,  # flask_caching.Cache timeout in seconds (default: 3600)
-    app_shell=..., # Appshell class for customization UI your app (default: BaseAppShell())
+    app_shell=...,               # Appshell class for customization UI your app (default: BaseAppShell())
     # And standart Plotly Dash param
  )
 ```
@@ -49,9 +47,9 @@ Each application page is a separate object, an instance of the `dash_express' cl
 page = Page(
     app=app,                    # DashExpress app
     url_path='/',               # page url
-    name='Owerview',               # page name in navigation buttons
+    name='Owerview',            # page name in navigation buttons
     getdf=get_df,               # function for getting pd.DataFrame
-    title='Owerview',              # page title
+    title='Owerview',           # page title
     )
 ```
 
@@ -80,7 +78,7 @@ The render_func parameter of the page.add_graph method is a graph generation fun
 bar_func = lambda df: px.histogram(df, x='continent', y='lifeExp', histfunc='avg')
 ```
 
-Последним действием остается добавление фильтров, которое делается простым выховом метода page.add_filter и указанием столбца фильтрации.
+The last action is to add filters, which is done by simply calling the page.add_filter method and specifying the filtering column.
 
 ```python
 page.add_autofilter('continent', multi=True)
@@ -88,11 +86,6 @@ page.add_autofilter('country', multi=True)
 page.add_autofilter('lifeExp', multi=True)
 ```
 
-The last action is to add filters, which is done by simply calling the page.add_filter method and specifying the filtering column.
-
-```python
-app.regester_page(page)
-```
 ## App run
 
 These actions are enough to create a fully functional dashboard, so you can run the application.
@@ -140,7 +133,6 @@ page.add_autofilter('continent', multi=True)
 page.add_autofilter('country', multi=True)
 page.add_autofilter('lifeExp', multi=True)
 
-app.register_page(page)
 app.run(debug=True)
 ```
 

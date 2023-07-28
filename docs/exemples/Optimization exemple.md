@@ -47,9 +47,9 @@ Each application page is a separate object, an instance of the `dash_express' cl
 page = Page(
     app=app,                    # DashExpress app
     url_path='/',               # page url
-    name='Owerview',               # page name in navigation buttons
+    name='Owerview',            # page name in navigation buttons
     getdf=get_df,               # function for getting pd.DataFrame
-    title='Owerview',              # page title
+    title='Owerview',           # page title
     )
 ```
 

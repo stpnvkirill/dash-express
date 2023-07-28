@@ -1,5 +1,5 @@
 import os
-import json
+import json, orjson
 
 import numpy as np
 import plotly.io as pio
@@ -8,6 +8,7 @@ import dash_mantine_components as dmc
 
 from ._page import Page
 from .kpi import KPI, FastKPI
+from flask_caching import Cache
 from functools import lru_cache
 from dash.exceptions import PreventUpdate
 from dash._jupyter import JupyterDisplayMode
@@ -259,9 +260,28 @@ class DashExpress(Dash):
                 ],
             )
 
-    def __init__(self, app_shell=BaseAppShell(), name=None, server=True, assets_folder="assets", pages_folder="pages", use_pages=None, assets_url_path="assets", assets_ignore="", assets_external_path=None, eager_loading=False, include_assets_files=True, include_pages_meta=True, url_base_pathname=None, requests_pathname_prefix=None, routes_pathname_prefix=None, serve_locally=True, compress=None, meta_tags=None, index_string=_default_index, external_scripts=None, external_stylesheets=None, suppress_callback_exceptions=None, prevent_initial_callbacks=False, show_undo_redo=False, extra_hot_reload_paths=None, plugins=None, title="Dash", update_title="Updating...", long_callback_manager=None, background_callback_manager=None, add_log_handler=True, **obsolete):
+    def __init__(self, app_shell=BaseAppShell(), cache=True, default_cache_timeout=3600, name=None, server=True, assets_folder="assets", pages_folder="pages", 
+                 use_pages=None, assets_url_path="assets", assets_ignore="", assets_external_path=None, eager_loading=False, 
+                 include_assets_files=True, include_pages_meta=True, url_base_pathname=None, requests_pathname_prefix=None, 
+                 routes_pathname_prefix=None, serve_locally=True, compress=None, meta_tags=None, index_string=_default_index, 
+                 external_scripts=None, external_stylesheets=None, suppress_callback_exceptions=None, prevent_initial_callbacks=False, 
+                 show_undo_redo=False, extra_hot_reload_paths=None, plugins=None, title="Dash", update_title="Updating...", 
+                 long_callback_manager=None, background_callback_manager=None, add_log_handler=True, **obsolete):
+        super().__init__(name, server, assets_folder, pages_folder, use_pages, assets_url_path, assets_ignore, assets_external_path, 
+                         eager_loading, include_assets_files, include_pages_meta, url_base_pathname, requests_pathname_prefix, 
+                         routes_pathname_prefix, serve_locally, compress, meta_tags, index_string, external_scripts, 
+                         external_stylesheets, suppress_callback_exceptions, prevent_initial_callbacks, show_undo_redo, 
+                         extra_hot_reload_paths, plugins, title, update_title, long_callback_manager, background_callback_manager, 
+                         add_log_handler, **obsolete)
         self.app_shell = app_shell
-        super().__init__(name, server, assets_folder, pages_folder, use_pages, assets_url_path, assets_ignore, assets_external_path, eager_loading, include_assets_files, include_pages_meta, url_base_pathname, requests_pathname_prefix, routes_pathname_prefix, serve_locally, compress, meta_tags, index_string, external_scripts, external_stylesheets, suppress_callback_exceptions, prevent_initial_callbacks, show_undo_redo, extra_hot_reload_paths, plugins, title, update_title, long_callback_manager, background_callback_manager, add_log_handler, **obsolete)
+        self.default_cache_timeout = default_cache_timeout
+        if isinstance(cache, Cache):
+            self.cache = cache
+        elif isinstance(cache, bool) and cache == True:
+            self.cache = Cache(self.server, config={'CACHE_TYPE': 'SimpleCache'})
+        else:
+            raise ValueError("cache must be a flask_caching.Cache or a boolean")
+        
 
     def _app_shell(self):
         self.layout = self.app_shell._app_provider(self)
@@ -270,7 +290,7 @@ class DashExpress(Dash):
         self.PAGES[Page.URL] = Page
 
     def cache_func(self,f):
-        return lru_cache(f)
+        return self.cache.cached(f, timeout=self.default_cache_timeout)
     
     def register_server_callback(self):
         """Register a function callback on the server side"""

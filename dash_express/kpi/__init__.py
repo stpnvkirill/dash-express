@@ -23,7 +23,7 @@ class KPI(object):
                                 id=dict(type='kpi', id=id)),
                         dmc.Text('Compared to previous month',
                                 fz="xs", c="dimmed", mt=7)]),
-                    dcc.Store(id=dict(type='kpifilter-store', id=id))
+                    dcc.Store(id=id)
                 ], justify="space-around", spacing=0),
             withBorder=True,
             radius='md',

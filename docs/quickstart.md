@@ -1,50 +1,23 @@
-## Create it
+# Introduction to DashExpress
 
-* Create a file `main.py` with:
+This quick tutorial introduces the key concepts and basic features of DashExpress to help you get started with your projects.
 
-```Python
-from typing import Union
+## Concepts
+Dash Express, as the name suggests, extends the popular web framework Plotly Dash, by adding responsive UI and generated automatic callback-functions. If you are not familiar with Dash, we recommend taking a quick look at its Getting started documentation before proceeding.
 
-from fastapi import FastAPI
+The logic of creating a Dash Express application, like any dashboard, comes down to 4 stages:
 
-app = FastAPI()
+1. Data collection
+2. Creating a layout
+3. Filling layouts with visualizations
+4. Adding filtering
 
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-```
-
-<details markdown="1">
-<summary>Or use <code>async def</code>...</summary>
-
-If your code uses `async` / `await`, use `async def`:
-
-```Python hl_lines="9  14"
-from typing import Union
-
-from fastapi import FastAPI
-
-app = FastAPI()
+Dash Express simplifies the second and fourth stages. The concept of Dash Express implies the rejection of the need to write callback functions. Despite the fact that writing such functions as a rule does not present any difficulty, it can be very tedious in the case of a large number of visualizations and (or) frequent changes in layout and content.
 
 
-@app.get("/")
-async def read_root():
-    return {"Hello": "World"}
+## Basic features
 
-
-@app.get("/items/{item_id}")
-async def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-```
-
-**Note**:
-
-If you don't know, check the _"In a hurry?"_ section about <a href="https://fastapi.tiangolo.com/async/#in-a-hurry" target="_blank">`async` and `await` in the docs</a>.
-
-</details>
+1. Pre-configured UI
+2. Automatic callback functions
+3. Autofilters
+4. An alternative implementation of multipage, with support for access depending on the user

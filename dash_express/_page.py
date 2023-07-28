@@ -125,7 +125,7 @@ class Page(object):
         id = str(uuid.uuid4())
         self.RENDER_FUNC_KPI[id] = kpi.render_func
         self.RENDER_FUNC_KPI['default'] = self.render_kpi_wrapper
-        return kpi.render_layout(id)
+        return kpi.render_layout(dict(type='kpifilter-store', id=id))
 
     def add_graph(self, id=None, render_func=None, **kwargs):
         CONFIG = {
@@ -164,19 +164,13 @@ class Page(object):
             **kwargs
         ))
 
-    def add_map(self, p=0, geojson_func=None, dl_geojson_kwargs={'zoomToBounds': True}, **kwargs):
+    def add_map(self, geojson_func=None, p=0, dl_geojson_kwargs={'zoomToBounds': True}, **kwargs):
         id = str(uuid.uuid4())
         geojson_func = geojson_func or self.geojson_wrapper
         self.GEOJSON_FUNC[id] = geojson_func
         self.GEOJSON_FUNC['default'] = self.geojson_wrapper
         return dmc.LoadingOverlay(dmc.Card(
             [
-                # dmc.CardSection(
-                #     dmc.Title('Graph', order=5),
-                #     withBorder=True,
-                #     inheritPadding=True,
-                #     py="xs",
-                # ),
                 html.Div(
                     dl.Map(
                         [dl.TileLayer(url=self.app.LIGHT_LEAFLET_TILE, id=dict(type='map-layer', id=id)),
@@ -240,7 +234,7 @@ class Page(object):
                     f'{percent:.1%}'), fz="sm", fw=500, color='red' if percent < 0 else 'green', size="lg", mb='sm')]
 
     @staticmethod
-    def geojson_wrapper(df):
+    def geojson_wrapper(gdf):
         """
         def geojson(df):
             geojson_str = ...
@@ -248,7 +242,7 @@ class Page(object):
             gdf = gpd.read_file(geojson_str, driver='GeoJSON')
         
             return gdf.__geo_interface__"""
-        return {}
+        return gdf.__geo_interface__
         
 
     def get_prewiew_layout(self):

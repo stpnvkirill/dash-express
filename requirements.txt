@@ -1,5 +1,7 @@
 dash
 pandas
+orjson
 dash_iconify
 dash_leaflet
+flask_caching
 dash_mantine_components

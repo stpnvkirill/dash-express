@@ -1,4 +1,4 @@
-# Fast analytical web application with DashExpress & Python
+# Fast analytical web application with DashExpress
 
 
 Build your next dashboard even faster with premade responsive UI and automatic callback-function

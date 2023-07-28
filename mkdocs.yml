@@ -48,6 +48,8 @@ theme:
   language: en
 
 markdown_extensions:
+  attr_list:
+  md_in_html:
   toc:
     permalink: true
   markdown.extensions.codehilite:

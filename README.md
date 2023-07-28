@@ -17,6 +17,8 @@ The key features are:
 
 ## Minimal full-featured dashboard
 
+![Image title](https://raw.githubusercontent.com/stpnvkirill/dash-express/main/docs/assets/gifs/CPT2307281249-600x297.gif)
+
 The first step is to import the necessary libraries
 
 ```python
@@ -143,6 +145,22 @@ page.add_autofilter('lifeExp', multi=True)
 
 app.register_page(page)
 app.run(debug=True)
+```
+
+## Requirements
+
+Python 3.7+
+
+DashExpress stands on the shoulders of giants:
+
+* <a href="https://dash.plotly.com/" class="external-link" target="_blank">Plotly Dash</a> for the web parts.
+* <a href="https://pandas.pydata.org/" class="external-link" target="_blank">Pandas DataFrame</a> for the data store & compute measure.
+* <a href="https://www.dash-mantine-components.com/" class="external-link" target="_blank">Dash Mantine Components</a> for the create pretty UI
+* <a href="https://dash-leaflet.herokuapp.com/" class="external-link" target="_blank">Dash Leaflet</a> for the create maps
+
+## License
+
+This project is licensed under the terms of the MIT license.
 ```
 
 ## Requirements

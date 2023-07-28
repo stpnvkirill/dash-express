@@ -70,7 +70,6 @@ markdown_extensions:
 
 extra_css:
   - assets/css/terminal.css
-  - assets/css/custom.css
 extra_javascript:
   - assets/js/terminal.js
   - assets/js/custom.js

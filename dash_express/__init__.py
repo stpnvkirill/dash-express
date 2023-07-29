@@ -54,7 +54,21 @@ class DashExpress(Dash):
     
     Dash is a framework for building analytic web applications without 
     the use of JavaScript.
+
+    :param logo: navbar logo, string or dict: {'dark':'path/to/darklogo.svg', 'light':...}
+    :type logo: string or dict
+
+    :param cache: flask_caching.Cache instance, dict or True (default: True)
+    :type cache: flask_caching.Cache instance, dict or True
+
+    :param default_cache_timeout: flask_caching.Cache timeout in seconds (default: 3600)
+    :type default_cache_timeout: int
+
+    :param app_shell: Appshell class for customization UI your app
+    :type app_shell: BaseAppShell instance
     
+    -------------------------------
+
     :param name: The name Flask should use for your app. Even if you provide
         your own ``server``, ``name`` will be used to help find assets.
         Typically ``__name__`` (the magic global var, not a string) is the
@@ -450,13 +464,33 @@ class DashExpress(Dash):
 
 class Page(object):  
     """Page object for quickly creating a web dashboard.
-        The app needs 3 components to work:
+        
+        :param app: DashExpress app
+        :type app: DashExpress instance
 
-        1) DataFrame get function
+        :param url_path: page_url
+        :type url_path: str
 
-        2) Dashboard layout
+        :param name: nav name
+        :type name: string
 
-        3) Functions for generating graphs, kpi values ​​and getting geojson
+        :param get_df: DataFrame function
+        :type get_df: function
+
+        :param title: page title
+        :type title: string
+
+        :param description: page description
+        :type description: string
+
+        :param access_func: function access
+        :type access_func: function
+
+        :param access_mode: 'hide' | 'view'
+        :type access_mode: string
+
+        :param download_opportunity: True | False
+        :type download_opportunity: bool
         """  
     def __repr__(self):
         return f'Page: {self.URL}'

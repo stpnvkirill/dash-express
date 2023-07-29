@@ -243,7 +243,7 @@ class DashExpress(Dash):
 
     def register_page(self, Page):
         self.PAGES[Page.URL] = Page
-    
+
     def register_server_callback(self):
         """Register a function callback on the server side"""
         # Send Page.layout to front
@@ -463,8 +463,10 @@ class Page(object):
 
     def __init__(self, app, url_path, name=None, get_df=None, title=None, description=None,
                  access_func=None, access_mode='hide', download_opportunity=True,):
+        prefix = app.config.get('url_base_pathname') or '/'
+        
         self.name = name or 'Page'        
-        self.URL = url_path
+        self.URL = prefix[:-1] + url_path
         self.title = title if title else app.config['title']
         self.description = description
         self.access_func = access_func

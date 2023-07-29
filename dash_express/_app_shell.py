@@ -94,12 +94,12 @@ class BaseAppShell(object):
         out_filter = list(filter(filters, navs))
         return out_filter
 
-    def logo_container(self):
+    def logo_container(self, app):
         return dmc.Anchor(
             dmc.Image(height=45, id='logo-img') if isinstance(self.LOGO, dict) else self.LOGO,
             weight=550,
             size=30,
-            href="/",
+            href=app.config.get('url_base_pathname') or '/',
             underline=False,
             pr='xl',
         ) if self.LOGO else html.Div()
@@ -181,7 +181,7 @@ class BaseAppShell(object):
             children=[
                 dmc.Col(
                     dmc.Group([
-                        self.logo_container(),
+                        self.logo_container(app),
                         dmc.MediaQuery(dmc.Group(
                             id='nav-content',
                             spacing=3,

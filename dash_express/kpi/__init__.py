@@ -5,6 +5,7 @@ import numpy as np
 
 
 class KPI(object):
+    """KPI class contains a container representation and the logic for calculating the indicator"""
     def __init__(self, title, func, icon="flat-ui:settings", **kwargs) -> None:
         self.title = title
         self.func = func
@@ -35,6 +36,11 @@ class KPI(object):
     
 
 class FastKPI(KPI):
+    """
+    col = DataFrame Column
+    agg_func = pivot func for calculate kpi
+    pretty_func = pretty func for result calculate, for example: lambda x: f'{x:.1%}'
+    title = title of cards? default automatic generation"""
     def __init__(self, col, agg_func=np.mean, pretty_func=lambda x: f'{x:.1%}', title='auto', 
                  icon="flat-ui:settings", **kwargs) -> None:
         if title == 'auto':

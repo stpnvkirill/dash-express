@@ -1,5 +1,5 @@
 import datetime
-# Функции фильтрации данных
+
 
 def select_filters(serias, value):
     return serias == value
@@ -16,5 +16,4 @@ def dateselect_filters(serias, value):
     return serias.dt.floor('d') == value
 
 def daterange_filters(serias, value):
-    # value = [datetime.datetime.strptime(v, '%Y-%m-%d').date() for v in value]
     return  (serias >= value[0]) & (serias <= value[1])

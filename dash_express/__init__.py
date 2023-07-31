@@ -444,6 +444,7 @@ class DashExpress(Dash):
         self.app_shell.app_shell_clientside(self)
 
     def compile_layout(self):
+        """Compile layout and callback functions"""
         self._app_shell()
         self.DOWNLOAD_OPPORTUNITY = np.any([page.download_opportunity for page in self.PAGES.values()])
         self.register_clientside_callback()
@@ -602,12 +603,76 @@ class Page(object):
         self.get_df_func = get_df_func
            
     def add_kpi(self, kpi):
+        """Add kpi_cards to the layout.
+        
+        The KPI rendering system is based on the use of the KPI class, which contains a container representation and the logic for calculating the indicator. The simplest implementation of KPI, with automatic generation of the calculation function, is presented in the FastKPI class:
+
+        ```python
+        from dash_express import FastKPI
+        app.add_kpi(FastKPI(columns, agg_func=np.sum)
+        ```
+
+        FastKPI Initialization Parameters:
+   
+        ```
+        col = DataFrame Column
+        agg_func = pivot func for calculate kpi
+        pretty_func = pretty func for result calculate, for example: lambda x: f'{x:.1%}'
+        title = title of cards? default automatic generation
+        ```
+        -----
+
+        An advanced way to add KPI is to create your own card by inheriting from the base class of KPI:
+
+        ```python
+        from dash_express import KPI
+
+        class MyKPI(KPI):
+            def __init__(self, ...):
+                ...
+
+            def render_layout(self, id):
+                '''Render Container'''
+                return dmc.Card(...)
+
+            def render_func(self,df):
+                '''Compute & Render value'''
+                return ...
+
+        app.add_kpi(MyKPI())
+        ```
+        """
         id = str(uuid.uuid4())
         self.RENDER_FUNC_KPI[id] = kpi.render_func
         self.RENDER_FUNC_KPI['default'] = self.render_kpi_wrapper
         return kpi.render_layout(dict(type='kpifilter-store', id=id))
 
     def add_graph(self, id=None, render_func=None, **kwargs):
+        """Add plotly figure to the layout
+        
+        The Plotly graphing library has more than 50 chart types to choose from. For Dash Express to work, you need to answer 2 questions:
+
+        1. Where is the graph located
+        2. How to build a graph
+
+        The answer to the first question is laid when developing the layout, by calling the page.add_graph(...) method in the location of the graph, a simple example:
+
+        ```python
+        dmc.SimpleGrid(
+            [
+                page.add_graph(h='100%',render_func=bar_func),
+                page.add_graph(h='100%',render_func=line_func),
+            ],
+            cols=2
+            )
+        ```
+
+        Through .add_graph is a function containing the logic of plotting to which the Dash Express application will pass the filtered DataFrame.
+        ```python
+        def bar_func(df):
+            return px.bar(df, x="nation", y="count", color="medal", title="Long-Form Input")
+        ```
+"""
         CONFIG = {
             'modeBarButtonsToRemove': ['pan2d', 'lasso2d',
                                     'logo', 
@@ -645,6 +710,22 @@ class Page(object):
         ))
 
     def add_map(self, geojson_func=None, p=0, dl_geojson_kwargs={'zoomToBounds': True}, **kwargs):
+        """Add a map to the layout
+        
+        If you use GeoPandas, you can add maps to your dashboard, it's as simple as adding a graph.:
+
+        ```python
+        page.add_map(geojson_func=None)
+        ```
+
+        geojson_func - should return GeoDataFrame.__get_interface__, if you do not need any additional transformations, do not specify this parameter, DashExpress will do everything for you.
+
+        ```python
+        def geojson_func(gdf):
+            gdf = gdf[gdf.geometry.geom_type == 'Polygon']
+            return gdf.__geo_interface__
+        ```
+        """
         id = str(uuid.uuid4())
         geojson_func = geojson_func or self.geojson_wrapper
         self.GEOJSON_FUNC[id] = geojson_func
@@ -670,7 +751,15 @@ class Page(object):
         ))
 
     def add_autofilter(self, col,  multi=False, type='auto', label='auto', **kwargs):
+        """Add filter to the layout with automatic generation.
+        
+        Specify the column by which filtering will take place and say the type of filtering multi = True|False
 
+        ```python
+        page.add_autofilter('continent', multi=True)
+        ```
+
+        You can also specify additional parameters of the Dash Mantine component."""
         filter_func, f = self._add_autofilter(
             col, multi, type, label, **kwargs)
         self.FILTERS_FUNC[col] = filter_func
@@ -694,6 +783,7 @@ class Page(object):
             return autofilter(type, serias, col, multi, label=label, **kwargs)
 
     def filtered(self, filters):
+        """Filter data by received constraints"""
         df = self.get_df_func()
         for k, v in filters.items():
             if v == None or (type(v) == type(list()) and len(v) == 0):

@@ -2,8 +2,9 @@ site_name: DashExpress
 site_url: https://dash-express.ru/
 site_author: Kirill Stepanov
 site_description: >-
-  Write your documentation in Markdown and create a professional static site in
-  minutes – searchable, customizable, in 60+ languages, for all devices
+  Build your next dashboard even faster with premade responsive UI and automatic callback-function.
+  DashExpress is a wrapper over the Plotly Dash web framework, which allows you to simplify and speed up 
+  the creation of multi-page analytical applications based on data from pd.DataFrame.
 
 # Repository
 repo_name: stpnvkirill/dash-express

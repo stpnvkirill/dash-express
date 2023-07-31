@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 import dash_mantine_components as dmc
 
 
+from .version import V
 from .kpi import KPI, FastKPI
 from .filters import autofilter
 from flask_caching import Cache

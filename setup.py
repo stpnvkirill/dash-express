@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dash_express",
-    version="1.0.1",                        # Обновляйте это для каждой новой версии
+    version="1.0.2",                     
     author="Kirill Stepanov",
     author_email="stpnv.kirill.o@gmail.com",
     description="A tool for faster application development Plotly Dash",
@@ -24,9 +24,9 @@ setuptools.setup(
     ],                                             
     url="https://github.com/stpnvkirill/dash-express",
     packages=setuptools.find_packages(),
-    classifiers=(                                 # Классификаторы помогают людям находить 
-        "Programming Language :: Python :: 3",    # ваши проекты. См. все возможные классификаторы 
-        "License :: OSI Approved :: MIT License", # на https://pypi.org/classifiers/
+    classifiers=(                                 
+        "Programming Language :: Python :: 3",    
+        "License :: OSI Approved :: MIT License", 
         "Operating System :: OS Independent",   
     ),
 )

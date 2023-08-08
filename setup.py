@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dash_express",
-    version="1.0.2",                     
+    version="1.1.0",                     
     author="Kirill Stepanov",
     author_email="stpnv.kirill.o@gmail.com",
     description="A tool for faster application development Plotly Dash",

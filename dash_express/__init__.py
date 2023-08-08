@@ -66,7 +66,7 @@ class DashExpress(Dash):
     :type default_cache_timeout: int
 
     :param app_shell: Appshell class for customization UI your app
-    :type app_shell: BaseAppShell instance
+    :type app_shell: AppShell instance
     
     -------------------------------
 
@@ -269,7 +269,7 @@ class DashExpress(Dash):
                     for k, v in self.PAGES.items() if v.is_accessible()}
             dict2 = {k: v.preview()for k, v in self.PAGES.items()
                     if not v.is_accessible() and v.access_mode == 'view'}
-            dict3 = {'#error': [None, self.app_shell.ERROR_PAGE]}
+            dict3 = {'#error': [None, self.app_shell.error_page(self)]}
 
             meta = {k:v.metatags() for k, v in self.PAGES.items()}
 
@@ -443,6 +443,7 @@ class DashExpress(Dash):
             Input("layout-store", 'data'))
         
         self.app_shell.app_shell_clientside(self)
+        self.app_shell.base_clientside(self)
 
     def compile_layout(self):
         """Compile layout and callback functions"""
@@ -537,7 +538,7 @@ class Page(object):
             dmc.CardSection(
                 dmc.Group(
                     children=[
-                        dmc.Title('Фильтры', order=3),
+                        dmc.Title('Filters', order=3),
                         dmc.LoadingOverlay(
                             dmc.Tooltip(
                                 multiline=True,
@@ -545,7 +546,7 @@ class Page(object):
                                 withArrow=True,
                                 transition="fade",
                                 transitionDuration=200,
-                                label="Скачать данные в виде таблицы",
+                                label="Download data",
                                 children=[dmc.ActionIcon(
                                     DashIconify(
                                         icon="line-md:download-loop", height=25),
@@ -594,7 +595,7 @@ class Page(object):
     
     def metatags(self):
         return {'title':self.title, 'description':self.description}
-
+   
     def register_frame(self, get_df):
         @self.app.cache.cached(timeout = self.app.default_cache_timeout, key_prefix=str(self) + '/')
         def get_df_func():

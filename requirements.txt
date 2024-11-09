@@ -1,7 +1,7 @@
-dash
-pandas
-orjson
-dash_iconify
-dash_leaflet
-flask_caching
-dash_mantine_components
+dash==2.18.2
+pandas==2.2.3
+orjson==3.10.11
+dash_iconify==0.1.2
+dash_leaflet==0.1.28
+flask_caching==2.0.2
+dash_mantine_components==0.12.1
